@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetris</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <h1 class="title">Tetris</h1>
+      <div class="game-wrap">
+        <canvas id="board" width="300" height="600" aria-label="Tetris playfield"></canvas>
+        <aside class="panel">
+          <canvas id="preview" width="120" height="120" aria-label="Next piece preview"></canvas>
+          <p class="label">Next</p>
+          <p id="status" class="status" role="status">Playing</p>
+          <button type="button" id="restart" class="btn">Restart</button>
+        </aside>
+      </div>
+      <section class="controls" aria-label="Controls">
+        <p><kbd>←</kbd> <kbd>→</kbd> Move &nbsp; <kbd>↓</kbd> Soft drop &nbsp; <kbd>↑</kbd> Rotate &nbsp; <kbd>Space</kbd> Hard drop</p>
+        <p><kbd>P</kbd> Pause</p>
+      </section>
+      <div class="touch-controls" aria-hidden="true">
+        <button type="button" data-action="left" class="touch-btn">←</button>
+        <button type="button" data-action="right" class="touch-btn">→</button>
+        <button type="button" data-action="rotate" class="touch-btn">↻</button>
+        <button type="button" data-action="down" class="touch-btn">↓</button>
+        <button type="button" data-action="drop" class="touch-btn wide">Drop</button>
+      </div>
+    </main>
+    <script src="js/game.js"></script>
+  </body>
+</html>
