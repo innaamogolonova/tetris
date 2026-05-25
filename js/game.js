@@ -382,6 +382,10 @@ document.addEventListener("keydown", (e) => {
       move(1);
       break;
     case "ArrowDown":
+      if (!e.repeat) {
+        softDrop(true);
+        dropTimer = 0;
+      }
       break;
     case "ArrowUp":
       tryRotate();
