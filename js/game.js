@@ -53,7 +53,7 @@ const COLORS = {
 const PIECES = Object.keys(SHAPES);
 const BASE_DROP_MS = 800;
 const SOFT_DROP_MS = 50;
-const LINES_PER_LEVEL = 10;
+const LINES_PER_LEVEL = 5;
 
 /** Tetris Guideline line-clear multipliers (× current level). */
 const LINE_SCORES = { 1: 100, 2: 300, 3: 500, 4: 800 };
