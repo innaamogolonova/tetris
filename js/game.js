@@ -51,12 +51,19 @@ const COLORS = {
 };
 
 const PIECES = Object.keys(SHAPES);
-const DROP_MS = 800;
+const BASE_DROP_MS = 800;
 const SOFT_DROP_MS = 50;
+const LINES_PER_LEVEL = 10;
+
+/** Tetris Guideline line-clear multipliers (× current level). */
+const LINE_SCORES = { 1: 100, 2: 300, 3: 500, 4: 800 };
 
 const boardCanvas = document.getElementById("board");
 const previewCanvas = document.getElementById("preview");
 const statusEl = document.getElementById("status");
+const scoreEl = document.getElementById("score");
+const levelEl = document.getElementById("level");
+const linesEl = document.getElementById("lines");
 const restartBtn = document.getElementById("restart");
 
 const ctx = boardCanvas.getContext("2d");
@@ -69,6 +76,30 @@ let dropTimer = 0;
 let lastTime = 0;
 let paused = false;
 let gameOver = false;
+let score = 0;
+let level = 1;
+let linesCleared = 0;
+
+function getDropInterval() {
+  return Math.max(80, BASE_DROP_MS - (level - 1) * 70);
+}
+
+function updateStats() {
+  scoreEl.textContent = score.toLocaleString();
+  levelEl.textContent = String(level);
+  linesEl.textContent = String(linesCleared);
+}
+
+function addLineClearScore(count) {
+  if (count < 1 || count > 4) return;
+  score += LINE_SCORES[count] * level;
+  linesCleared += count;
+  const newLevel = Math.floor(linesCleared / LINES_PER_LEVEL) + 1;
+  if (newLevel > level) {
+    level = newLevel;
+  }
+  updateStats();
+}
 
 function createGrid() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
@@ -146,6 +177,9 @@ function clearLines() {
     cleared++;
     r++;
   }
+  if (cleared > 0) {
+    addLineClearScore(cleared);
+  }
 }
 
 function spawn() {
@@ -168,10 +202,14 @@ function move(dir) {
   return false;
 }
 
-function softDrop() {
+function softDrop(manual = false) {
   if (!current || gameOver || paused) return;
   if (!collide(current, 1, 0)) {
     current.row++;
+    if (manual) {
+      score += 1;
+      updateStats();
+    }
     dropTimer = 0;
   } else {
     lockPiece();
@@ -180,8 +218,14 @@ function softDrop() {
 
 function hardDrop() {
   if (!current || gameOver || paused) return;
+  let cells = 0;
   while (!collide(current, 1, 0)) {
     current.row++;
+    cells++;
+  }
+  if (cells > 0) {
+    score += cells * 2;
+    updateStats();
   }
   lockPiece();
 }
@@ -208,6 +252,10 @@ function reset() {
   lastTime = 0;
   paused = false;
   gameOver = false;
+  score = 0;
+  level = 1;
+  linesCleared = 0;
+  updateStats();
   setStatus("Playing");
   spawn();
   draw();
@@ -298,9 +346,10 @@ function update(time = 0) {
 
   if (!paused && !gameOver) {
     dropTimer += delta;
-    const interval = keysDown.has("ArrowDown") ? SOFT_DROP_MS : DROP_MS;
+    const holdingSoftDrop = keysDown.has("ArrowDown");
+    const interval = holdingSoftDrop ? SOFT_DROP_MS : getDropInterval();
     if (dropTimer >= interval) {
-      softDrop();
+      softDrop(holdingSoftDrop);
       dropTimer = 0;
     }
   }
@@ -333,7 +382,6 @@ document.addEventListener("keydown", (e) => {
       move(1);
       break;
     case "ArrowDown":
-      softDrop();
       break;
     case "ArrowUp":
       tryRotate();
@@ -363,7 +411,7 @@ document.querySelectorAll(".touch-btn").forEach((btn) => {
         move(1);
         break;
       case "down":
-        softDrop();
+        softDrop(true);
         break;
       case "rotate":
         tryRotate();

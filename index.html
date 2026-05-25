@@ -12,6 +12,20 @@
       <div class="game-wrap">
         <canvas id="board" width="300" height="600" aria-label="Tetris playfield"></canvas>
         <aside class="panel">
+          <dl class="stats">
+            <div class="stat">
+              <dt>Score</dt>
+              <dd id="score">0</dd>
+            </div>
+            <div class="stat">
+              <dt>Level</dt>
+              <dd id="level">1</dd>
+            </div>
+            <div class="stat">
+              <dt>Lines</dt>
+              <dd id="lines">0</dd>
+            </div>
+          </dl>
           <canvas id="preview" width="120" height="120" aria-label="Next piece preview"></canvas>
           <p class="label">Next</p>
           <p id="status" class="status" role="status">Playing</p>
